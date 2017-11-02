@@ -114,16 +114,21 @@ insert_and_coalesce(free_list_node* node) {
       else if ((void*) node + node->size == (void*) cur) {
         // increase the size of the given node to include the current node size
         node->size = node->size + cur->size;
+
         // basically, discard the current node and replace it with the given node
-        prev->next = node; //point the previous node to the given node
+        if (prev != 0) {
+          prev->next = node; //point the previous node to the given node if prevous is not null
+        }
         node->next = cur->next; //point the given node to the current's next node
       }
 
       // No coalescing necessary because the given node is not adjacent to any existing blocks
       // Just insert the node
       else {
-        // set the previous' next node to the given node
-        prev->next = node;
+        // set the previous' next node to the given node if previous is not null
+        if (prev != 0) {
+          prev->next = node;
+        }
         // set the given node's next to the current node
         node->next = cur;
       }
