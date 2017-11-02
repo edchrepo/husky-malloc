@@ -87,7 +87,7 @@ Inserts the given node into the free_list, ensuring the following variants:
 void
 insert_and_coalesce(free_list_node* node) {
   free_list_node* cur = free_list_head;
-  free_list_node* prev;
+  free_list_node* prev = 0;
   while (cur != 0) {
     // if the current node is greater than the given address,
     // insert the given node after the previous node
@@ -125,6 +125,7 @@ insert_and_coalesce(free_list_node* node) {
       // break because the node has been inserted or coalesced
       break;
 
+      //TODO delete below
       /*
       // set the previous' next node to the given node
       prev->next = node;
@@ -164,9 +165,9 @@ hmalloc(size_t size)
 
     // For requests less than a page size
     if (size < PAGE_SIZE) {
-      free_list_node* big_enough_block; //initialize the big enough block to null
+      free_list_node* big_enough_block = 0; //initialize the big enough block to null
       free_list_node* cur = free_list_head;
-      free_list_node* prev;
+      free_list_node* prev = 0;
       while (cur != 0) {
         // Check if the current block is big enough to store the size
         // If so, remove it from the list
