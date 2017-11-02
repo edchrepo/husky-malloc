@@ -110,17 +110,9 @@ insert_and_coalesce(free_list_node* node) {
         prev_size = prev->size;
       }
 
-      // The given node is adjacent to the end of the previous node
-      // Need to coalesce
-      if ((void*) prev + prev_size == (void*) node) {
-        // just increase the size of the previous node to include the given node
-        // basically, discard the given node b/c it is now part of the prev node
-        prev->size = prev->size + node->size;
-      }
-
       // The given node is adjacent to the beginning of the current node
       // Need to coalesce
-      else if ((void*) node + node->size == (void*) cur) {
+      if ((void*) node + node->size == (void*) cur) {
         // increase the size of the given node to include the current node size
         node->size = node->size + cur->size;
 
@@ -131,9 +123,17 @@ insert_and_coalesce(free_list_node* node) {
         node->next = cur->next; //point the given node to the current's next node
       }
 
+      // The given node is adjacent to the end of the previous node
+      // Need to coalesce
+      if ((void*) prev + prev_size == (void*) node) {
+        // just increase the size of the previous node to include the given node
+        // basically, discard the given node b/c it is now part of the prev node
+        prev->size = prev->size + node->size;
+      }
+
       // No coalescing necessary because the given node is not adjacent to any existing blocks
       // Just insert the node
-      else {
+      if (((void*) node + node->size != (void*) cur) && ((void*) prev + prev_size != (void*) node)) {
         // set the previous' next node to the given node if previous is not null
         if (prev != 0) {
           prev->next = node;
@@ -197,9 +197,10 @@ hmalloc(size_t size)
       free_list_node* cur = free_list_head;
       free_list_node* prev = 0;
       while (cur != 0) {
-        printf("top of while loop to see if theres a big enough block\n");
-        printf("size, %li\n", size);
-        printf("cursize, %li \n", (long) cur->size);
+        // TODO remove prints
+        // printf("top of while loop to see if theres a big enough block\n");
+        // printf("size, %li\n", size);
+        // printf("cursize, %li \n", (long) cur->size);
         // Check if the current block is big enough to store the size
         // If so, remove it from the list
         if (cur->size >= size) {
@@ -223,7 +224,8 @@ hmalloc(size_t size)
       // Either there was not a big enough block or the free list was empty
       // so, mmap a new block of 1 page
       if (big_enough_block == 0) {
-        printf("big_enough_block is null\n" );
+        //TODO
+        //printf("big_enough_block is null\n" );
         big_enough_block = mmap(0, PAGE_SIZE, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
         assert(big_enough_block != MAP_FAILED);
         stats.pages_mapped += 1;
@@ -233,7 +235,8 @@ hmalloc(size_t size)
       // Check if the big_enough_block is bigger than the request,
       // and if the leftover is big enough to store a free list cell
       if ((big_enough_block->size > size) && (big_enough_block->size - size >= sizeof(free_list_node))) {
-        printf("Big enough to store extra!!\n" );
+        //TODO
+        //printf("Big enough to store extra!!\n" );
         // address at which leftover goes into the list
         void* address = (void*) big_enough_block + size;
 
