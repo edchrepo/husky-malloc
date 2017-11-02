@@ -38,8 +38,6 @@ free_list_length()
     free_list_node* cur = free_list_head;
 
     while (cur != 0) {
-      printf("Cur address: %lu\n", (uintptr_t) cur);
-      printf("cur size: %li\n", (long) cur->size);
       length += 1;
       cur = cur->next;
     }
@@ -197,8 +195,6 @@ hmalloc(size_t size)
 {
     stats.chunks_allocated += 1;
     size += sizeof(size_t); //make space to track the size of the block
-
-    printf("size to allocate, %li\n", (long) size);
 
     // For requests less than a page size
     if (size < PAGE_SIZE) {
