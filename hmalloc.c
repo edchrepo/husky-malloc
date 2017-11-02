@@ -110,9 +110,26 @@ insert_and_coalesce(free_list_node* node) {
         prev_size = prev->size;
       }
 
+      // The given node is adjacent to the nodes on both sides of it (prev and cur)
+      // Need to coalesce on both sides
+      if (((void*) prev + prev_size == (void*) node) && ((void*) node + node->size == (void*) cur)) {
+        // basically, discard the given node and the current node
+        // just keep the previous node, and adjust size accordingly
+        prev->size = prev->size + node->size + cur->size;
+        prev->next = cur->next;
+      }
+
+      // The given node is adjacent to the end of the previous node
+      // Need to coalesce
+      else if ((void*) prev + prev_size == (void*) node) {
+        // just increase the size of the previous node to include the given node
+        // basically, discard the given node b/c it is now part of the prev node
+        prev->size = prev->size + node->size;
+      }
+
       // The given node is adjacent to the beginning of the current node
       // Need to coalesce
-      if ((void*) node + node->size == (void*) cur) {
+      else if ((void*) node + node->size == (void*) cur) {
         // increase the size of the given node to include the current node size
         node->size = node->size + cur->size;
 
@@ -123,17 +140,9 @@ insert_and_coalesce(free_list_node* node) {
         node->next = cur->next; //point the given node to the current's next node
       }
 
-      // The given node is adjacent to the end of the previous node
-      // Need to coalesce
-      if ((void*) prev + prev_size == (void*) node) {
-        // just increase the size of the previous node to include the given node
-        // basically, discard the given node b/c it is now part of the prev node
-        prev->size = prev->size + node->size;
-      }
-
       // No coalescing necessary because the given node is not adjacent to any existing blocks
       // Just insert the node
-      if (((void*) node + node->size != (void*) cur) && ((void*) prev + prev_size != (void*) node)) {
+      else {
         // set the previous' next node to the given node if previous is not null
         if (prev != 0) {
           prev->next = node;
