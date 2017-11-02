@@ -95,9 +95,15 @@ insert_and_coalesce(free_list_node* node) {
       //TODO: tring to coalesce on insertion... could be wrong.
       // commented out old stuff so if all fails, just uncomment that and delete whatever else here
 
+      // Get the size of the previous node, unless it is null
+      size_t prev_size = 0;
+      if (prev != 0) {
+        prev_size = prev->size;
+      }
+
       // The given node is adjacent to the end of the previous node
       // Need to coalesce
-      if ((void*) prev + prev->size == (void*) node) {
+      if ((void*) prev + prev_size == (void*) node) {
         // just increase the size of the previous node to include the given node
         // basically, discard the given node b/c it is now part of the prev node
         prev->size = prev->size + node->size;
@@ -179,12 +185,16 @@ hmalloc(size_t size)
         // If so, remove it from the list
         if (cur->size >= size) {
           big_enough_block = cur; // set big_enough_block to the current block
-          prev->next = cur->next; // remove the current block from the list
 
-          // if we removed the first element, update the free_list_head
-          if (free_list_head == cur) {
+          // remove the current block from the list
+          if (prev != 0) {
+            // if it's not the first element, set the previous' next to the current next
+            prev->next = cur->next;
+          } else {
+            // if we removed the first element, update the free_list_head
             free_list_head = cur->next;
           }
+
           break;
         }
         prev = cur; // set the prev node to the current node
