@@ -3,6 +3,7 @@
 #include <sys/mman.h>
 #include <stdio.h>
 #include <assert.h>
+#include <stdint.h>
 
 #include "hmalloc.h"
 
