@@ -220,7 +220,7 @@ hmalloc(size_t size)
       size_t size = num_pages * PAGE_SIZE;
       free_list_node* block = mmap(0, size, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
       assert(block != MAP_FAILED);
-      stats.pages_mapped += 1;
+      stats.pages_mapped += num_pages;
 
       block->size = size; // fill in the size of the block
 
@@ -254,6 +254,7 @@ hfree(void* item)
       // munmap the block
       int rv = munmap(block, block->size);
       assert(rv != -1);
-      stats.pages_unmapped += 1;
+      int num_pages = (block->size + PAGE_SIZE - 1) / PAGE_SIZE;
+      stats.pages_unmapped += num_pages;
     }
 }
