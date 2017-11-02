@@ -37,7 +37,7 @@ free_list_length()
     free_list_node* cur = free_list_head;
 
     while (cur != 0) {
-      printf("Cur address: %p\n", (void*) cur);
+      printf("Cur address: %lu\n", (uintptr_t) cur);
       printf("cur size: %li\n", (long) cur->size);
       length += 1;
       cur = cur->next;
