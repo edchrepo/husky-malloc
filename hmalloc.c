@@ -86,6 +86,12 @@ Inserts the given node into the free_list, ensuring the following variants:
 */
 void
 insert_and_coalesce(free_list_node* node) {
+  // if the list is empty, just insert it
+  if (free_list_head == 0) {
+    free_list_head = node;
+    return;
+  }
+
   free_list_node* cur = free_list_head;
   free_list_node* prev = 0;
   while (cur != 0) {
