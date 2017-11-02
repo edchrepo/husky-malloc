@@ -252,9 +252,9 @@ hfree(void* item)
     // block is greater than or equal to 1 page in size
     else {
       // munmap the block
+      int num_pages = (block->size + PAGE_SIZE - 1) / PAGE_SIZE;
       int rv = munmap((void*) block, block->size);
       assert(rv != -1);
-      int num_pages = (block->size + PAGE_SIZE - 1) / PAGE_SIZE;
       stats.pages_unmapped += num_pages;
     }
 }
