@@ -180,6 +180,8 @@ hmalloc(size_t size)
     stats.chunks_allocated += 1;
     size += sizeof(size_t); //make space to track the size of the block
 
+    printf("size to allocate, %li\n", (long) size);
+
     // For requests less than a page size
     if (size < PAGE_SIZE) {
       free_list_node* big_enough_block = 0; //initialize the big enough block to null
@@ -222,6 +224,7 @@ hmalloc(size_t size)
       // Check if the big_enough_block is bigger than the request,
       // and if the leftover is big enough to store a free list cell
       if ((big_enough_block->size > size) && (big_enough_block->size - size >= sizeof(free_list_node))) {
+        printf("Big enough to store extra!!\n" );
         // address at which leftover goes into the list
         void* address = (void*) big_enough_block + size;
 
