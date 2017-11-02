@@ -186,6 +186,9 @@ hmalloc(size_t size)
       free_list_node* cur = free_list_head;
       free_list_node* prev = 0;
       while (cur != 0) {
+        printf("top of while loop to see if theres a big enough block\n");
+        printf("size, %li\n", size);
+        printf("cursize, %li \n", (long) cur->size);
         // Check if the current block is big enough to store the size
         // If so, remove it from the list
         if (cur->size >= size) {
@@ -209,6 +212,7 @@ hmalloc(size_t size)
       // Either there was not a big enough block or the free list was empty
       // so, mmap a new block of 1 page
       if (big_enough_block == 0) {
+        printf("big_enough_block is null\n" );
         big_enough_block = mmap(0, PAGE_SIZE, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
         assert(big_enough_block != MAP_FAILED);
         stats.pages_mapped += 1;
