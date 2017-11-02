@@ -122,6 +122,12 @@ insert_and_coalesce(free_list_node* node) {
         node->next = cur;
       }
 
+      // If the previous node was null, then we are inserting at the beginning of the free list
+      // So we need to update free_list_head
+      if (prev == 0) {
+        free_list_head = node;
+      }
+
       // break because the node has been inserted or coalesced
       break;
 
@@ -174,6 +180,11 @@ hmalloc(size_t size)
         if (cur->size >= size) {
           big_enough_block = cur; // set big_enough_block to the current block
           prev->next = cur->next; // remove the current block from the list
+
+          // if we removed the first element, update the free_list_head
+          if (free_list_head == cur) {
+            free_list_head = cur->next;
+          }
           break;
         }
         prev = cur; // set the prev node to the current node
